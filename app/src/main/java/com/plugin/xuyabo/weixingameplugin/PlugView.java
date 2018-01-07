@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -68,5 +69,23 @@ public class PlugView extends LinearLayout{
 
     public  interface  TouchInterface{
         void onClickPoint(float x1,float y1,float x2,float y2);
+        void onBack();
+    }
+
+    //// TODO: 2018/1/7 为甚使用这样方法才监听到back键
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        switch (event.getKeyCode()) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mInterface != null) {
+                    mInterface.onBack();
+                }
+                break;
+            case KeyEvent.KEYCODE_MENU:
+                // 处理自己的逻辑break;
+            default:
+                break;
+        }
+        return super.dispatchKeyEvent(event);
     }
 }

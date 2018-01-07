@@ -46,6 +46,11 @@ public class DistanceToTime {
 
     }
 
+    /**
+     * 根据距离计算出按下时间
+     * @param distance
+     * @return
+     */
     public  static int calculateTime(int distance) {
         Integer needTime = mCollecData.get(distance);
         if(needTime!=null){

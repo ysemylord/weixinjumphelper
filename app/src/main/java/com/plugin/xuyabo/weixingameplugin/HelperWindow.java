@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
+
 
 /**
  * Created by xuyabo on 2018/1/5.
@@ -35,23 +37,12 @@ public class HelperWindow {
         if (mHelperView != null && mHelperView.getParent() != null) {
             mWindowManager.removeView(mHelperView);
         }
-
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        // 类型TYPE_APPLICATION_OVERLAY
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        // WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-        // 设置flag
-        int flags = //WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | FLAG_NOT_TOUCH_MODAL
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        // 如果设置了WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE，弹出的View收不到Back键的事件
-        params.flags = flags;
-        // 不设置这个弹出框的透明遮罩显示为黑色
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         params.format = PixelFormat.TRANSLUCENT;
-        // FLAG_NOT_TOUCH_MODAL不阻塞事件传递到后面的窗口
-        // 设置 FLAG_NOT_FOCUSABLE 悬浮窗口较小时，后面的应用图标由不可长按变为可长按
-        // 不设置这个flag的话，home页的划屏会有问题
-        params.width = width;//WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = height;// WindowManager.LayoutParams.MATCH_PARENT;
+        params.width = width;
+        params.height = height;
         params.gravity = Gravity.TOP;
         mWindowManager.addView(mHelperView, params);
         Log.i(LOG_TAG, "add view");
@@ -80,6 +71,11 @@ public class HelperWindow {
                 delatPointTextView.setText(delatXStr + "\n" + delatYStr + "\n" + "直线距离:" + lineDistance + "\n"
                         + needTime);
 
+            }
+
+            @Override
+            public void onBack() {
+                hidePopupWindow();
             }
         });
 
@@ -117,19 +113,6 @@ public class HelperWindow {
             }
         });
 
-        // 点击back键可消除
-        helperView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_BACK:
-                        hidePopupWindow();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
         return helperView;
     }
 
