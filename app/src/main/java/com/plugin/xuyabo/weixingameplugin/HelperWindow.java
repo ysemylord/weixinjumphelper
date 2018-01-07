@@ -31,6 +31,32 @@ public class HelperWindow {
         mHelperView = setUpView(mContext);
     }
 
+    public void showPopupWindow(int width, int height) {
+        if (mHelperView != null && mHelperView.getParent() != null) {
+            mWindowManager.removeView(mHelperView);
+        }
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        // 类型TYPE_APPLICATION_OVERLAY
+        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        // WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+        // 设置flag
+        int flags = //WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | FLAG_NOT_TOUCH_MODAL
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        // 如果设置了WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE，弹出的View收不到Back键的事件
+        params.flags = flags;
+        // 不设置这个弹出框的透明遮罩显示为黑色
+        params.format = PixelFormat.TRANSLUCENT;
+        // FLAG_NOT_TOUCH_MODAL不阻塞事件传递到后面的窗口
+        // 设置 FLAG_NOT_FOCUSABLE 悬浮窗口较小时，后面的应用图标由不可长按变为可长按
+        // 不设置这个flag的话，home页的划屏会有问题
+        params.width = width;//WindowManager.LayoutParams.MATCH_PARENT;
+        params.height = height;// WindowManager.LayoutParams.MATCH_PARENT;
+        params.gravity = Gravity.TOP;
+        mWindowManager.addView(mHelperView, params);
+        Log.i(LOG_TAG, "add view");
+    }
+
     private View setUpView(final Context context) {
         Log.i(LOG_TAG, "setUp helperView");
         PlugView helperView = (PlugView) LayoutInflater.from(context).inflate(R.layout.popup_window, null);
@@ -69,21 +95,21 @@ public class HelperWindow {
             }
         });
 
-        Button positiveBtn = (Button) helperView.findViewById(R.id.positiveBtn);
+        Button positiveBtn =  helperView.findViewById(R.id.positiveBtn);
         positiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 maxPopupWindow();
             }
         });
-        Button negativeBtn = (Button) helperView.findViewById(R.id.negativeBtn);
+        Button negativeBtn =  helperView.findViewById(R.id.negativeBtn);
         negativeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hidePopupWindow();
             }
         });
-        Button minBtn = (Button) helperView.findViewById(R.id.min_btn);
+        Button minBtn = helperView.findViewById(R.id.min_btn);
         minBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,33 +150,7 @@ public class HelperWindow {
 
     }
 
-    public void showPopupWindow(int width, int height) {
-        if (mHelperView != null && mHelperView.getParent() != null) {
-            mWindowManager.removeView(mHelperView);
-        }
-
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        // 类型TYPE_APPLICATION_OVERLAY
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        // WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-        // 设置flag
-        int flags = //WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | FLAG_NOT_TOUCH_MODAL
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        // 如果设置了WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE，弹出的View收不到Back键的事件
-        params.flags = flags;
-        // 不设置这个弹出框的透明遮罩显示为黑色
-        params.format = PixelFormat.TRANSLUCENT;
-        // FLAG_NOT_TOUCH_MODAL不阻塞事件传递到后面的窗口
-        // 设置 FLAG_NOT_FOCUSABLE 悬浮窗口较小时，后面的应用图标由不可长按变为可长按
-        // 不设置这个flag的话，home页的划屏会有问题
-        params.width = width;//WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = height;// WindowManager.LayoutParams.MATCH_PARENT;
-        params.gravity = Gravity.TOP;
-        mWindowManager.addView(mHelperView, params);
-        Log.i(LOG_TAG, "add view");
-    }
-
-    public void maxPopupWindow(){
+    private void maxPopupWindow(){
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) mHelperView.getLayoutParams();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
